@@ -1,11 +1,11 @@
 <template>
     <li class="memo-item">
         <strong>{{ memo.title }}</strong>
-        <p @dblclick="handleDbClick">
+        <p @dblclick="handleDblClick">
             <span v-if="!isEditing">
                 {{ memo.content }}
             </span>
-            <input v-else type="text" ref="content" :value="memo.content"/>
+            <input v-else type="text" ref="content" :value="memo.content" @blur="handleBlur" @keydown.enter="updateMemo"/>
         </p>
         <button type="button" @click="deleteMemo">
             <i class="fas fa-times"></i>
@@ -20,6 +20,12 @@ export default {
             type: Object
         }
     },
+    beforeUpdate () {
+        console.log('beforeUpdate =>', this.$refs.content);
+    },
+    updated () {
+        console.log('updated =>', this.$refs.content);
+    },
     data () {
         return {
             isEditing: false
@@ -30,9 +36,24 @@ export default {
             const id = this.memo.id;
             this.$emit('deleteMemo', id);
         },
-        handleDbClick () {
+        handleDblClick () {
             this.isEditing = true;
-            this.$refs.content.focus();
+            console.log('handleDblClick =>', this.$refs.content);
+            this.$nextTick(() => {
+                this.$refs.content.focus();
+            });
+        },
+        updateMemo (e) {
+            const id = this.memo.id;
+            const content = e.target.value.trim();
+            if (content.length <= 0) {
+                return false;
+            }
+            this.$emit('updateMemo', { id, content });
+            this.isEditing = false;
+        },
+        handleBlur () {
+            this.isEditing = false;
         }
     }
 
