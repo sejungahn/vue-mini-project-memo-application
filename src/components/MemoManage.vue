@@ -8,8 +8,13 @@
 </template>
 
 <script>
+import axios from 'axios';
 import MemoForm from './MemoForm';
 import MemoState from './MemoState';
+
+const memoAPICore = axios.create({
+    baseURL: 'http://localhost:8000/api/memos'
+});
 
 export default {
     name: 'MemoManage',
@@ -23,12 +28,20 @@ export default {
         };
     },
     created () {
-        this.memos = localStorage.memos ? JSON.parse(localStorage.memos) : [];
+        // this.memos = localStorage.memos ? JSON.parse(localStorage.memos) : [];
+        memoAPICore.get('/')
+            .then(res => {
+                this.memos = res.data;
+            });
     },
     methods: {
         addMemo (payload) {
-            this.memos.push(payload);
-            this.storeMemo();
+            memoAPICore.post('/', payload)
+                .then(res => {
+                    this.memos.push(res.data);
+                });
+            // this.memos.push(payload);
+            // this.storeMemo();
         },
         storeMemo () {
             const memosToString = JSON.stringify(this.memos);
@@ -36,9 +49,14 @@ export default {
         },
         deleteMemo (id) {
             const targetIndex = this.memos.findIndex(v => v.id === id);
-            this.memos.splice(targetIndex, 1);
-
-            this.storeMemo();
+            // 삭제 대상과 일치하는 id 값을 delete 메소드와 함께 요청
+            memoAPICore.delete(`/${id}`)
+                .then(() => {
+                    // 요청 후 MemoManagement 컴포넌트의 memos 데이터에서 삭제
+                    this.memos.splice(targetIndex, 1);
+                });
+            // this.memos.splice(targetIndex, 1);
+            // this.storeMemo();
         },
         updateMemo (payload) {
             const { id, content } = payload;

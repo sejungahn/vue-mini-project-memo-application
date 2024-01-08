@@ -28,14 +28,14 @@ export default {
         },
         addMemo () {
             const { title, content } = this; // 비구조화 할당
-            const id = new Date().getTime();
+            // const id = new Date().getTime();
 
             const isEmpty = title.length <= 0 || content.length <= 0;
             if (isEmpty) {
                 return false;
             }
 
-            this.$emit('addMemo', { id, title, content });
+            // this.$emit('addMemo', { id, title, content });
             this.resetFields();
         }
     }
