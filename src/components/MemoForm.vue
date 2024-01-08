@@ -28,14 +28,15 @@ export default {
         },
         addMemo () {
             const { title, content } = this; // 비구조화 할당
-            // const id = new Date().getTime();
+            // const id = new Date().getTime(); // 임의의 id 생성 변수
 
             const isEmpty = title.length <= 0 || content.length <= 0;
             if (isEmpty) {
                 return false;
             }
 
-            // this.$emit('addMemo', { id, title, content });
+            // this.$emit('addMemo', { id, title, content });   // 부모 컴포넌트에 전달해주는 인자 추가
+            this.$emit('addMemo', { title, content });
             this.resetFields();
         }
     }
