@@ -43,10 +43,10 @@ export default {
             // this.memos.push(payload);
             // this.storeMemo();
         },
-        storeMemo () {
-            const memosToString = JSON.stringify(this.memos);
-            localStorage.setItem('memos', memosToString);
-        },
+        // storeMemo () {
+        //     const memosToString = JSON.stringify(this.memos);
+        //     localStorage.setItem('memos', memosToString);
+        // },
         deleteMemo (id) {
             const targetIndex = this.memos.findIndex(v => v.id === id);
             // 삭제 대상과 일치하는 id 값을 delete 메소드와 함께 요청
@@ -62,8 +62,12 @@ export default {
             const { id, content } = payload;
             const targetIndex = this.memos.findIndex(v => v.id === id);
             const targetMemo = this.memos[targetIndex];
-            this.memos.splice(targetIndex, 1, { ...targetMemo, content });
-            this.storeMemo();
+            memoAPICore.put(`/${id}`, { content })
+                .then(() => {
+                    this.memos.splice(targetIndex, 1, { ...targetMemo, content });
+                });
+            // this.memos.splice(targetIndex, 1, { ...targetMemo, content });
+            // this.storeMemo();
         }
     }
 };
